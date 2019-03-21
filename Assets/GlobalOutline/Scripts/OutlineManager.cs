@@ -15,8 +15,8 @@ namespace GlobalOutline
         private static Shader _outlineReplacementShader;
 
         private GameObject _effectGameObject;
-        private Camera _camera;
         private Camera _effectCamera;
+        private Camera _camera;
         private RenderBuffer[] _renderBuffers = new RenderBuffer[2];
         private List<OutlineEffect> _registeredEffects = new List<OutlineEffect>();
 
@@ -117,13 +117,13 @@ namespace GlobalOutline
             _registeredEffects.Remove(outlineEffect);
         }
 
-        RenderTexture GetTemporaryColorTexture()
+        private RenderTexture GetTemporaryColorTexture()
         {
             var renderTexture = RenderTexture.GetTemporary(_effectCamera.pixelWidth, _effectCamera.pixelHeight, 0);
             return renderTexture;
         }
 
-        RenderTexture GetTemporaryDepthTexture()
+        private RenderTexture GetTemporaryDepthTexture()
         {
             var renderTexture = RenderTexture.GetTemporary(_effectCamera.pixelWidth, _effectCamera.pixelHeight, 24, RenderTextureFormat.Depth);
             return renderTexture;
