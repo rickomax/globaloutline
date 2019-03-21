@@ -6,7 +6,6 @@ namespace GlobalOutline
 {
     internal class OutlineEffect : MonoBehaviour
     {
-        private const int MaxCapacity = 9999;
         public List<Renderer> Renderers { get; private set; }
         public List<Graphic> Graphics { get; private set; }
         public List<Material> OriginalGraphicMaterials { get; private set; }
@@ -15,10 +14,10 @@ namespace GlobalOutline
         private void Start()
         {
             OutlineManager.Instance.Register(this);
-            Renderers = new List<Renderer>(MaxCapacity);
-            Graphics = new List<Graphic>(MaxCapacity);
-            OriginalGraphicMaterials = new List<Material>(MaxCapacity);
-            InstantiatedGraphicMaterials = new List<Material>(MaxCapacity);
+            Renderers = new List<Renderer>();
+            Graphics = new List<Graphic>();
+            OriginalGraphicMaterials = new List<Material>();
+            InstantiatedGraphicMaterials = new List<Material>();
             CollectComponents();
         }
 
