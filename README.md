@@ -9,7 +9,7 @@ To use it, add the "OutlineManager.cs" script to the camera that will render the
 
 You can also add the "OutlineTests.cs" script to an empty GameObject and fill the "ObjectsToApply" array with the objects you want to apply the effect to.
 
-Known issues:
+Known issues:<br>
 -The script works only on forward rendering at the moment.<br>
 -Multiple outline effects aren't possible at the moment.<br>
 
