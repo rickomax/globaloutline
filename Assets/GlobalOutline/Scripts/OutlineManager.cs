@@ -77,6 +77,7 @@ namespace GlobalOutline
             _effectCamera.clearFlags = CameraClearFlags.SolidColor;
             _effectCamera.backgroundColor = _transparentColor;
             _effectCamera.depthTextureMode = DepthTextureMode.Depth;
+            _effectCamera.renderingPath = RenderingPath.Forward;
             var colorRenderTexture = GetTemporaryColorTexture();
             var depthRenderTexture = GetTemporaryDepthTexture();
             _effectCamera.SetTargetBuffers(colorRenderTexture.colorBuffer, depthRenderTexture.depthBuffer);
