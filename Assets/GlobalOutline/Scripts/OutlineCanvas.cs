@@ -13,7 +13,7 @@ namespace GlobalOutline
         {
             _canvas = gameObject.AddComponent<Canvas>();
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            _canvas.sortingOrder = 1000000;
+            _canvas.sortingOrder = 16960;
             _rawImage = gameObject.AddComponent<RawImage>();
             _rawImage.raycastTarget = false;
         }
