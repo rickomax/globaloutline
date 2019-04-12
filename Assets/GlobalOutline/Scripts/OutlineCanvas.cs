@@ -15,6 +15,7 @@ namespace GlobalOutline
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             _canvas.sortingOrder = 1000000;
             _rawImage = gameObject.AddComponent<RawImage>();
+            _rawImage.raycastTarget = false;
         }
 
         private void OnDestroy()
