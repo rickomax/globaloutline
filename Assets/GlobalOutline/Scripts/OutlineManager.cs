@@ -15,14 +15,17 @@ namespace GlobalOutline
         private static Shader _outlineReplacementShader;
 
         private GameObject _effectGameObject;
-        private Camera _effectCamera;
         private Camera _camera;
         private RenderBuffer[] _renderBuffers = new RenderBuffer[2];
         private List<OutlineEffect> _registeredEffects = new List<OutlineEffect>();
+        private GameObject _outlineCanvasGameObject;
+        private OutlineCanvas _outlineCanvas;
 
         public float EffectSize = 5f;
         public Color EffectColor = Color.red;
         public int EffectBlurSteps = 5;
+
+        public Camera EffectCamera { get; private set; }
 
         private void Start()
         {
@@ -44,12 +47,20 @@ namespace GlobalOutline
                 _outlineReplacementShader = Shader.Find("Hidden/GlobalOutlineReplacement");
             }
             _camera = GetComponent<Camera>();
-            var outlineEffect = _camera.gameObject.AddComponent<OutlineCamera>();
-            outlineEffect.OutlineManager = this;
-            _effectGameObject = new GameObject("GlobalOutline");
+            _outlineCanvasGameObject = new GameObject("Outline Canvas");
+            _outlineCanvas =  _outlineCanvasGameObject.AddComponent<OutlineCanvas>();
+            _effectGameObject = new GameObject("Global Outline");
             _effectGameObject.transform.SetParent(transform, false);
-            _effectCamera = _effectGameObject.AddComponent<Camera>();
-            _effectCamera.enabled = false;
+            EffectCamera = _effectGameObject.AddComponent<Camera>();
+            EffectCamera.enabled = false;
+        }
+
+        private void OnDestroy()
+        {
+            if (_outlineCanvasGameObject != null)
+            {
+                Destroy(_outlineCanvasGameObject);
+            }
         }
 
         public void AddGameObject(GameObject gameObject)
@@ -72,17 +83,17 @@ namespace GlobalOutline
             {
                 outlineEffect.BeginEffect();
             }
-            _effectCamera.CopyFrom(_camera);
-            _effectCamera.enabled = false;
-            _effectCamera.clearFlags = CameraClearFlags.SolidColor;
-            _effectCamera.backgroundColor = _transparentColor;
-            _effectCamera.depthTextureMode = DepthTextureMode.Depth;
-            _effectCamera.renderingPath = RenderingPath.Forward;
+            EffectCamera.CopyFrom(_camera);
+            EffectCamera.enabled = false;
+            EffectCamera.clearFlags = CameraClearFlags.SolidColor;
+            EffectCamera.backgroundColor = _transparentColor;
+            EffectCamera.depthTextureMode = DepthTextureMode.Depth;
+            EffectCamera.renderingPath = RenderingPath.Forward;
             var colorRenderTexture = GetTemporaryColorTexture();
             var depthRenderTexture = GetTemporaryDepthTexture();
-            _effectCamera.SetTargetBuffers(colorRenderTexture.colorBuffer, depthRenderTexture.depthBuffer);
-            _effectCamera.RenderWithShader(_outlineReplacementShader, null);
-            var outlineRenderTexture = RenderTexture.GetTemporary(_effectCamera.pixelWidth, _effectCamera.pixelHeight, 0);
+            EffectCamera.SetTargetBuffers(colorRenderTexture.colorBuffer, depthRenderTexture.depthBuffer);
+            EffectCamera.RenderWithShader(_outlineReplacementShader, null);
+            var outlineRenderTexture = RenderTexture.GetTemporary(EffectCamera.pixelWidth, EffectCamera.pixelHeight, 0);
             _outlineMaterial.SetFloat("_OutlineSize", EffectSize);
             _outlineMaterial.SetColor("_OutlineColor", EffectColor);
             _outlineMaterial.mainTexture = colorRenderTexture;
@@ -119,13 +130,13 @@ namespace GlobalOutline
 
         private RenderTexture GetTemporaryColorTexture()
         {
-            var renderTexture = RenderTexture.GetTemporary(_effectCamera.pixelWidth, _effectCamera.pixelHeight, 0);
+            var renderTexture = RenderTexture.GetTemporary(EffectCamera.pixelWidth, EffectCamera.pixelHeight, 0);
             return renderTexture;
         }
 
         private RenderTexture GetTemporaryDepthTexture()
         {
-            var renderTexture = RenderTexture.GetTemporary(_effectCamera.pixelWidth, _effectCamera.pixelHeight, 24, RenderTextureFormat.Depth);
+            var renderTexture = RenderTexture.GetTemporary(EffectCamera.pixelWidth, EffectCamera.pixelHeight, 24, RenderTextureFormat.Depth);
             return renderTexture;
         }
     }

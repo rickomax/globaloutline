@@ -6,18 +6,21 @@ namespace GlobalOutline
 {
     internal class OutlineEffect : MonoBehaviour
     {
-        public List<Renderer> Renderers { get; private set; }
-        public List<Graphic> Graphics { get; private set; }
-        public List<Material> OriginalGraphicMaterials { get; private set; }
-        public List<Material> InstantiatedGraphicMaterials { get; private set; }
+        private List<Renderer> _renderers;
+        private List<Graphic> _graphics;
+        private List<Material> _originalGraphicMaterials;
+        private List<Material> _instantiatedGraphicMaterials;
+        private Canvas _canvas;
+        private Camera _canvasCamera;
+        private bool _hasToResetCamera;
 
         private void Start()
         {
             OutlineManager.Instance.Register(this);
-            Renderers = new List<Renderer>();
-            Graphics = new List<Graphic>();
-            OriginalGraphicMaterials = new List<Material>();
-            InstantiatedGraphicMaterials = new List<Material>();
+            _renderers = new List<Renderer>();
+            _graphics = new List<Graphic>();
+            _originalGraphicMaterials = new List<Material>();
+            _instantiatedGraphicMaterials = new List<Material>();
             CollectComponents();
         }
 
@@ -34,18 +37,40 @@ namespace GlobalOutline
 
         private void CollectComponents()
         {
-            GetComponentsInChildren(Renderers);
-            GetComponentsInChildren(Graphics);
-            OriginalGraphicMaterials.Clear();
+            _canvas = GetComponentInParent<Canvas>();
+            GetComponentsInChildren(_renderers);
+            GetComponentsInChildren(_graphics);
+            _originalGraphicMaterials.Clear();
             DestroyInstantiatedMaterials();
-            InstantiatedGraphicMaterials.Clear();
+            _instantiatedGraphicMaterials.Clear();
         }
 
         private void DestroyInstantiatedMaterials()
         {
-            foreach (var material in InstantiatedGraphicMaterials)
+            foreach (var material in _instantiatedGraphicMaterials)
             {
                 Destroy(material);
+            }
+        }
+
+        private void OverlayToCamera()
+        {
+            if (_canvas != null && _canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+            {
+                _canvasCamera = _canvas.worldCamera;
+                _canvas.renderMode = RenderMode.ScreenSpaceCamera;
+                _canvas.worldCamera = OutlineManager.Instance.EffectCamera;
+                _hasToResetCamera = true;
+            }
+        }
+
+        private void CameraToOverlay()
+        {
+            if (_hasToResetCamera)
+            {
+                _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                _canvas.worldCamera = _canvasCamera;
+                _hasToResetCamera = false;
             }
         }
 
@@ -55,32 +80,33 @@ namespace GlobalOutline
             {
                 return;
             }
-            for (var i = 0; i < Graphics.Count; i++)
+            OverlayToCamera();
+            for (var i = 0; i < _graphics.Count; i++)
             {
-                Graphic graphic = Graphics[i];
+                Graphic graphic = _graphics[i];
                 Material instantiatedGraphicMaterial;
-                if (i >= OriginalGraphicMaterials.Count || Graphics[i].material != OriginalGraphicMaterials[i])
+                if (i >= _originalGraphicMaterials.Count || _graphics[i].material != _originalGraphicMaterials[i])
                 {
                     instantiatedGraphicMaterial = Instantiate(graphic.material);
-                    if (i >= OriginalGraphicMaterials.Count)
+                    if (i >= _originalGraphicMaterials.Count)
                     {
-                        OriginalGraphicMaterials.Add(graphic.material);
-                        InstantiatedGraphicMaterials.Add(instantiatedGraphicMaterial);
+                        _originalGraphicMaterials.Add(graphic.material);
+                        _instantiatedGraphicMaterials.Add(instantiatedGraphicMaterial);
                     }
                     else
                     {
-                        OriginalGraphicMaterials[i] = graphic.material;
-                        InstantiatedGraphicMaterials[i] = instantiatedGraphicMaterial;
+                        _originalGraphicMaterials[i] = graphic.material;
+                        _instantiatedGraphicMaterials[i] = instantiatedGraphicMaterial;
                     }
                 }
                 else
                 {
-                    instantiatedGraphicMaterial = InstantiatedGraphicMaterials[i];
+                    instantiatedGraphicMaterial = _instantiatedGraphicMaterials[i];
                 }
                 instantiatedGraphicMaterial.SetInt("_GlobalOutline", 1);
                 graphic.material = instantiatedGraphicMaterial;
             }
-            foreach (var renderer in Renderers)
+            foreach (var renderer in _renderers)
             {
                 renderer.material.SetInt("_GlobalOutline", 1);
             }
@@ -92,11 +118,12 @@ namespace GlobalOutline
             {
                 return;
             }
-            for (var i = 0; i < Graphics.Count; i++)
+            CameraToOverlay();
+            for (var i = 0; i < _graphics.Count; i++)
             {
-                Graphics[i].material = OriginalGraphicMaterials[i];
+                _graphics[i].material = _originalGraphicMaterials[i];
             }
-            foreach (var renderer in Renderers)
+            foreach (var renderer in _renderers)
             {
                 renderer.material.SetInt("_GlobalOutline", 0);
             }
