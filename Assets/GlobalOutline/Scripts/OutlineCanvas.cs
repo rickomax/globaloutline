@@ -21,7 +21,13 @@ namespace GlobalOutline
             _rawImage.raycastTarget = false;
         }
 
-
+        private void OnDestroy()
+        {
+            if (_tempRenderTexture != null)
+            {
+                RenderTexture.ReleaseTemporary(_tempRenderTexture);
+            }
+        }
 
         private void Update()
         {
