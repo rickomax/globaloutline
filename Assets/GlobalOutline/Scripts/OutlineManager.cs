@@ -104,7 +104,6 @@ namespace GlobalOutline
             {
                 outlineEffect.EndEffect();
             }
-            //var finalColorTexture = GetTemporaryColorTexture();
             var swapColorTexture = GetTemporaryColorTexture();
             Graphics.CopyTexture(outlineRenderTexture, finalColorTexture);
             RenderTexture.ReleaseTemporary(outlineRenderTexture);
