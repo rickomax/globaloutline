@@ -104,6 +104,7 @@ namespace GlobalOutline
                     instantiatedGraphicMaterial = _instantiatedGraphicMaterials[i];
                 }
                 instantiatedGraphicMaterial.SetInt("_GlobalOutline", 1);
+                instantiatedGraphicMaterial.SetOverrideTag("RenderType", _hasToResetCamera ? "Overlay" : "Transparent");
                 graphic.material = instantiatedGraphicMaterial;
             }
             foreach (var renderer in _renderers)

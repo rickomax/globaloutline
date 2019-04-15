@@ -87,7 +87,7 @@ namespace GlobalOutline
             var colorRenderTexture = GetTemporaryColorTexture();
             var depthRenderTexture = GetTemporaryDepthTexture();
             EffectCamera.SetTargetBuffers(colorRenderTexture.colorBuffer, depthRenderTexture.depthBuffer);
-            EffectCamera.RenderWithShader(_outlineReplacementShader, null);
+            EffectCamera.RenderWithShader(_outlineReplacementShader, "RenderType");
             var outlineRenderTexture = RenderTexture.GetTemporary(EffectCamera.pixelWidth, EffectCamera.pixelHeight, 0);
             _outlineMaterial.SetFloat("_OutlineSize", EffectSize);
             _outlineMaterial.SetColor("_OutlineColor", EffectColor);
