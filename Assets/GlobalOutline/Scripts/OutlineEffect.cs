@@ -126,6 +126,7 @@ namespace GlobalOutline
             foreach (var renderer in _renderers)
             {
                 renderer.material.SetInt("_GlobalOutline", 0);
+                renderer.material.SetInt("_IgnoreDepth", 0);
             }
         }
     }

@@ -11,12 +11,11 @@ namespace GlobalOutline
 
         private static Material _outlineMaterial;
         private static Material _blurMaterial;
-        private static Color _transparentColor;
+        private static Color _transparentColor = new Color(0f, 0f, 0f, 0f);
         private static Shader _outlineReplacementShader;
 
         private GameObject _effectGameObject;
         private Camera _camera;
-        private RenderBuffer[] _renderBuffers = new RenderBuffer[2];
         private List<OutlineEffect> _registeredEffects = new List<OutlineEffect>();
         private GameObject _outlineCanvasGameObject;
         private OutlineCanvas _outlineCanvas;
@@ -37,10 +36,6 @@ namespace GlobalOutline
             if (_blurMaterial == null)
             {
                 _blurMaterial = new Material(Shader.Find("Hidden/GlobalBlur"));
-            }
-            if (_transparentColor == null)
-            {
-                _transparentColor = new Color(0f, 0f, 0f, 0f);
             }
             if (_outlineReplacementShader == null)
             {
