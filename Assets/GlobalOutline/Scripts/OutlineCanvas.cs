@@ -7,6 +7,9 @@ namespace GlobalOutline
     {
         private Canvas _canvas;
         private RawImage _rawImage;
+        private int _width;
+        private int _height;
+
         private RenderTexture _tempRenderTexture;
 
         private void Awake()
@@ -18,22 +21,22 @@ namespace GlobalOutline
             _rawImage.raycastTarget = false;
         }
 
-        private void OnDestroy()
-        {
-            if (_tempRenderTexture != null)
-            {
-                _tempRenderTexture.Release();
-            }
-        }
+
 
         private void Update()
         {
-            if (_tempRenderTexture != null)
+            if (_width != Screen.width || _height != Screen.height)
             {
-                _tempRenderTexture.Release();
+                if (_tempRenderTexture != null)
+                {
+                    RenderTexture.ReleaseTemporary(_tempRenderTexture);
+                }
+                _width = Screen.width;
+                _height = Screen.height;
+                _tempRenderTexture = RenderTexture.GetTemporary(_width, _height, 0);
+                _rawImage.texture = _tempRenderTexture;
             }
-            _tempRenderTexture = OutlineManager.Instance.GetTexture();
-            _rawImage.texture = _tempRenderTexture;
+            OutlineManager.Instance.FillTexture(_tempRenderTexture);
         }
     }
 }

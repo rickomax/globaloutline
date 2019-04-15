@@ -77,7 +77,7 @@ namespace GlobalOutline
             }
         }
 
-        internal RenderTexture GetTexture()
+        internal void FillTexture(RenderTexture finalColorTexture)
         {
             foreach (var outlineEffect in _registeredEffects)
             {
@@ -104,7 +104,7 @@ namespace GlobalOutline
             {
                 outlineEffect.EndEffect();
             }
-            var finalColorTexture = GetTemporaryColorTexture();
+            //var finalColorTexture = GetTemporaryColorTexture();
             var swapColorTexture = GetTemporaryColorTexture();
             Graphics.CopyTexture(outlineRenderTexture, finalColorTexture);
             RenderTexture.ReleaseTemporary(outlineRenderTexture);
@@ -115,7 +115,6 @@ namespace GlobalOutline
                 Graphics.CopyTexture(swapColorTexture, finalColorTexture);
             }
             RenderTexture.ReleaseTemporary(swapColorTexture);
-            return finalColorTexture;
         }
 
         internal void Register(OutlineEffect outlineEffect)
